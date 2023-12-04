@@ -1,5 +1,5 @@
 # tests/test_routes.py
-from app import app
+from App import app
 import json
 
 def test_hello_world():
@@ -40,9 +40,25 @@ def test_create_tweet_missing_text():
     assert response.status_code == 400
     assert response.json is not None
 
+
+def test_create_tweet_success():
+    client = app.test_client()
+    tweet_data = {"text": "New tweet"}
+    response = client.post('/tweets', json=tweet_data)
+    assert response.status_code == 201
+    assert response.json is not None
+
+def test_create_tweet_missing_text():
+    client = app.test_client()
+    tweet_data = {}  # Missing 'text' field
+    response = client.post('/tweets', json=tweet_data)
+    assert response.status_code == 400
+    assert response.json is not None
+
 def test_create_tweet_bad_request():
     client = app.test_client()
     tweet_data = "Not a dictionary"  # Bad request data
-    response = client.post('/tweets', data=tweet_data)
+    response = client.post('/tweets', json=tweet_data)
     assert response.status_code == 400
     assert response.json is not None
+
